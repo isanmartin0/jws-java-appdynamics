@@ -4,9 +4,12 @@ USER root
 
 ADD appdynamics/ /opt/appdynamics/
 ADD AvantCardRootCertificationAuthority.crt /tmp
+
 RUN chgrp -R 0 /opt/appdynamics/
 RUN chmod -R g+rw /opt/appdynamics/
 RUN find /opt/appdynamics/ -type d -exec chmod g+x {} +
+
+RUN value=`cat /opt/webserver/conf/server.xml` && echo "${value//20000/60000}" >| /opt/webserver/conf/server.xml
 
 RUN keytool -import -trustcacerts -alias avcrAppDProdController -keystore $JAVA_HOME/jre/lib/security/cacerts -file /tmp/AvantCardRootCertificationAuthority.crt -noprompt -storepass 'changeit'
 #-keystore /etc/pki/ca-trust/extracted/java/cacerts  
